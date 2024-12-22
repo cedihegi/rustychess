@@ -1,7 +1,4 @@
-use crate::{
-    logic::move_computer::StepComputer,
-    models::{board::Board, game_state::GameState, step::StepKind},
-};
+use crate::models::game_state::GameState;
 use std::io;
 
 use super::game::Game;
