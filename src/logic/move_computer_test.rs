@@ -67,7 +67,9 @@ pub fn castle() {
     let steps = board.compute_steps();
 
     let castles: Vec<StepKind> = steps
-        .iter().filter(|&step| matches!(step, StepKind::Castle { .. })).cloned()
+        .iter()
+        .filter(|&step| matches!(step, StepKind::Castle { .. }))
+        .cloned()
         .collect();
     println!("Steps: {:?}", steps);
     assert_eq!(castles.len(), 2);
@@ -83,7 +85,7 @@ pub fn checkmove() -> Result<(), String> {
     let _ = game.apply_input("f1c4")?;
     let _ = game.apply_input("a5a4")?;
     let res = game.apply_input("h5f7")?;
-    assert_eq!(res, GameState::Won(PieceColor::Black));
+    assert_eq!(res, GameState::Won(PieceColor::White));
     Ok(())
 }
 
