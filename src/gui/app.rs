@@ -41,8 +41,7 @@ impl App {
                     Constraint::Length(5), // Header
                     Constraint::Fill(1),
                     Constraint::Length(2), // Footer
-                ]
-                .into_iter(),
+                ],
             )
             .split(frame.area());
 
@@ -53,8 +52,7 @@ impl App {
                     Constraint::Length(10),
                     Constraint::Fill(1),
                     Constraint::Length(10),
-                ]
-                .into_iter(),
+                ],
             )
             .split(layout_outer[1]);
         frame.render_widget(Header, layout_outer[0]);

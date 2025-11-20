@@ -21,6 +21,12 @@ pub struct BoardWidget {
     pub click_state_2: ClickState,
 }
 
+pub struct BoardState {
+    pub board_fields: Vec<BoardField>,
+    pub first_selection: Option<(usize, usize)>,
+    pub second_selection: Option<(usize, usize)>,
+}
+
 const COORDINATE_WIDTH: u16 = 4;
 const COORDINATE_HEIGHT: u16 = 2;
 pub const CELL_WIDTH: u16 = 9;
@@ -76,31 +82,25 @@ impl StatefulWidget for &BoardWidget {
             .border_set(border::PLAIN)
             .render(outer_square, buf);
 
-        let (board_fields, selected_1, selected_2) = self.board_fields(&fields_square);
-        if let (Some(pos1), Some(pos2)) = (selected_1, selected_2) {
+        let board_state = self.board_fields(&fields_square);
+        if let (Some(pos1), Some(pos2)) =
+            (board_state.first_selection, board_state.second_selection)
+        {
             let stepkind = StepKind::GoTo(Step::new(pos1, pos2));
             *next_step = Some(stepkind);
         }
-        for field in board_fields.iter() {
+        for field in board_state.board_fields.iter() {
             let (x, y) = field.chess_coordinates;
-            let mut field_content = board
+            let mut field_content = *board
                 .field_at_xy(x, y)
-                .expect("Error indexing board fields")
-                .clone();
+                .expect("Error indexing board fields");
             field.render(fields_square, buf, &mut field_content);
         }
     }
 }
 
 impl BoardWidget {
-    fn board_fields(
-        &self,
-        area: &Rect,
-    ) -> (
-        Vec<BoardField>,
-        Option<(usize, usize)>,
-        Option<(usize, usize)>,
-    ) {
+    fn board_fields(&self, area: &Rect) -> BoardState {
         let mut res_fields = vec![];
         let selected1 = self.click_state_1.selected.unwrap_or((u16::MAX, u16::MAX));
         let selected2 = self.click_state_2.selected.unwrap_or((u16::MAX, u16::MAX));
@@ -137,20 +137,25 @@ impl BoardWidget {
                     selected2_chess_cords = Some((chess_i, chess_j))
                 }
 
-                let cell = BoardField::new(
+                let cell = BoardField {
                     x,
                     y,
-                    CELL_WIDTH,
-                    CELL_HEIGHT,
-                    (chess_i, chess_j),
+                    width: CELL_WIDTH,
+                    height: CELL_HEIGHT,
+                    chess_coordinates: (chess_i, chess_j),
                     color,
                     contains_mouse,
-                    contains_first_click,
-                );
+                    was_clicked: contains_first_click,
+                };
                 res_fields.push(cell);
             }
         }
-        (res_fields, selected1_chess_cords, selected2_chess_cords)
+
+        BoardState {
+            board_fields: res_fields,
+            first_selection: selected1_chess_cords,
+            second_selection: selected2_chess_cords,
+        }
     }
 
     /// a somewhat ugly function ot handle the state when mouse is up/down
@@ -161,14 +166,12 @@ impl BoardWidget {
         );
         if let Some(first_click) = self.click_state_1.selected {
             let second_click_opt = self.click_state_2.update(position, click_direction);
-            if let Some(second_click) = second_click_opt {
-                Some(Step::new(
+            second_click_opt.map(|second_click| {
+                Step::new(
                     (first_click.0 as usize, first_click.1 as usize),
                     (second_click.0 as usize, second_click.1 as usize),
-                ))
-            } else {
-                None
-            }
+                )
+            })
         } else {
             self.click_state_1.update(position, click_direction);
             None

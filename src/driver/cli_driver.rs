@@ -16,7 +16,7 @@ impl CliDriver {
             io::stdin()
                 .read_line(&mut input)
                 .expect("Failed to read line");
-            let outcome = game.apply_input(&input.trim());
+            let outcome = game.apply_input(input.trim());
             match outcome {
                 Err(s) => println!("Move failed with error: {}", s),
                 Ok(GameState::Ongoing) => println!("Move executed"),

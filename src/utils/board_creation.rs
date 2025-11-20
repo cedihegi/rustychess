@@ -11,7 +11,7 @@ impl BoardCreation {
         let lines = descr.lines();
         for line in lines {
             let line = line.trim();
-            if line.len() == 0 {
+            if line.is_empty() {
                 continue;
             }
             let chars: Vec<char> = line.chars().collect();

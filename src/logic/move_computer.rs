@@ -20,8 +20,8 @@ impl StepComputer for Board {
         let has_check = self.has_check(None);
         BasicEvaluation {
             has_check,
-            has_checkmate: possible_moves.len() == 0 && has_check,
-            has_stalemate: possible_moves.len() == 0 && !has_check,
+            has_checkmate: possible_moves.is_empty() && has_check,
+            has_stalemate: possible_moves.is_empty() && !has_check,
             possible_moves,
         }
     }
@@ -32,7 +32,7 @@ impl StepComputer for Board {
         steps.append(&mut self.castle_moves());
         self.filter_check_steps(&mut steps);
 
-        return steps;
+        steps
     }
     /// this function is ugly a.f.
     /// tries to be a little more efficient than just computing all the possible moves in a
@@ -51,10 +51,10 @@ impl Board {
         let color = color_opt.unwrap_or(self.turn_color());
         let king_position = self.find_king(color).expect("No king on the board");
         let steps = steps_opt.unwrap_or_else(|| self.compute_simple_steps(Some(color.invert())));
-        return steps.iter().any(|step| {
+        steps.iter().any(|step| {
             let target = step.target();
             target.is_some() && target.unwrap() == king_position
-        });
+        })
     }
 
     /// computes steps just based on the piece's capabilities,
@@ -91,28 +91,20 @@ impl Board {
                 // queenside:
                 // contains rook that hasn't been moved
                 let rook1_loc = Location::new(0, rank);
-                if self.location_contains_piece(&rook1_loc, vec![PieceKind::Rook], color)
-                    && self.location_piece_unmoved(&rook1_loc)
-                {
-                    if (1..3).all(|x| self.location_is_emtpy(&Location::new(x, rank))) {
-                        res.push(StepKind::Castle {
-                            king_step: Step::new((4, rank), (2, rank)),
-                            rook_step: Step::new((0, rank), (3, rank)),
-                        })
-                    }
+                if self.location_contains_piece(&rook1_loc, vec![PieceKind::Rook], color) && self.location_piece_unmoved(&rook1_loc) && (1..3).all(|x| self.location_is_emtpy(&Location::new(x, rank))) {
+                    res.push(StepKind::Castle {
+                        king_step: Step::new((4, rank), (2, rank)),
+                        rook_step: Step::new((0, rank), (3, rank)),
+                    })
                 }
 
                 // kingside
                 let rook2_loc = Location::new(self.width - 1, rank);
-                if self.location_contains_piece(&rook2_loc, vec![PieceKind::Rook], color)
-                    && self.location_piece_unmoved(&rook2_loc)
-                {
-                    if (5..=6).all(|x| self.location_is_emtpy(&Location::new(x, rank))) {
-                        res.push(StepKind::Castle {
-                            king_step: Step::new((4, rank), (6, rank)),
-                            rook_step: Step::new((self.width - 1, rank), (5, rank)),
-                        })
-                    }
+                if self.location_contains_piece(&rook2_loc, vec![PieceKind::Rook], color) && self.location_piece_unmoved(&rook2_loc) && (5..=6).all(|x| self.location_is_emtpy(&Location::new(x, rank))) {
+                    res.push(StepKind::Castle {
+                        king_step: Step::new((4, rank), (6, rank)),
+                        rook_step: Step::new((self.width - 1, rank), (5, rank)),
+                    })
                 }
 
                 res

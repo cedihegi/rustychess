@@ -51,11 +51,7 @@ impl Board {
 
     pub fn location_piece_unmoved(&self, location: &Location) -> bool {
         let field_opt = self.field_at_location(location);
-        if let Some(FieldContent::Occupied { turn: 0, .. }) = field_opt {
-            true
-        } else {
-            false
-        }
+        matches!(field_opt, Some(FieldContent::Occupied { turn: 0, .. }))
     }
 
     pub fn location_is_emtpy(&self, location: &Location) -> bool {
@@ -124,7 +120,7 @@ impl Board {
     }
 
     pub fn turn_color(&self) -> PieceColor {
-        if self.turn % 2 == 0 {
+        if self.turn.is_multiple_of(2) {
             PieceColor::White
         } else {
             PieceColor::Black
@@ -211,7 +207,7 @@ impl Board {
             }
         }
         self.turn += 1;
-        return Ok(());
+        Ok(())
     }
 
     pub fn apply_step(&mut self, step: &Step) -> Result<(), String> {
@@ -219,9 +215,9 @@ impl Board {
         if let Some(FieldContent::Occupied { piece, .. }) = moved_field {
             self.put_piece_on_location(*piece, &step.to, self.turn);
             self.set_field_empty(&step.from);
-            return Ok(());
+            Ok(())
         } else {
-            return Err(format!("Empty or non-existent field: {:?}", step.from));
+            Err(format!("Empty or non-existent field: {:?}", step.from))
         }
     }
 

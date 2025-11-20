@@ -11,14 +11,14 @@ use super::board::{CELL_HEIGHT, CELL_WIDTH};
 
 #[derive(Debug, Default)]
 pub struct BoardField {
-    x: u16,
-    y: u16,
-    width: u16,
-    height: u16,
+    pub x: u16,
+    pub y: u16,
+    pub width: u16,
+    pub height: u16,
     pub chess_coordinates: (usize, usize),
-    color: Color,
-    contains_mouse: bool,
-    was_clicked: bool,
+    pub color: Color,
+    pub contains_mouse: bool,
+    pub was_clicked: bool,
 }
 
 pub const BORDER_OUTER: Set = Set {
@@ -67,29 +67,7 @@ impl StatefulWidget for &BoardField {
 }
 
 impl BoardField {
-    pub fn new(
-        x: u16,
-        y: u16,
-        width: u16,
-        height: u16,
-        chess_coordinates: (usize, usize),
-        color: Color,
-        contains_mouse: bool,
-        was_clicked: bool,
-    ) -> Self {
-        Self {
-            x,
-            y,
-            width,
-            height,
-            chess_coordinates,
-            color,
-            contains_mouse,
-            was_clicked,
-        }
-    }
-
-    pub fn content_paragraph(content: &FieldContent) -> Option<Paragraph> {
+    pub fn content_paragraph(content: &FieldContent) -> Option<Paragraph<'_>> {
         if let Some(color) = content.get_color() {
             let tui_color = match color {
                 PieceColor::White => Color::Cyan,

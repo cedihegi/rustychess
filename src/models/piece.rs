@@ -97,7 +97,7 @@ impl ColoredPiece {
     pub fn to_colored_symbol(&self) -> String {
         let symbol = self.kind.to_symbol();
         let color = self.color.ansi_color();
-        return color.paint(symbol).to_string();
+        color.paint(symbol).to_string()
     }
 
     pub fn piece_move_capabilities(&self) -> Vec<MoveCapability> {

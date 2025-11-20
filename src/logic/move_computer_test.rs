@@ -1,10 +1,8 @@
 use crate::driver::game::Game;
 use crate::logic::move_computer::StepComputer;
 use crate::models::game_state::GameState;
-use crate::models::step::Step;
 use crate::models::{
     board::Board,
-    location::Location,
     piece::{ColoredPiece, PieceColor, PieceKind},
     step::StepKind,
 };
@@ -69,9 +67,7 @@ pub fn castle() {
     let steps = board.compute_steps();
 
     let castles: Vec<StepKind> = steps
-        .iter()
-        .cloned()
-        .filter(|step| matches!(step, StepKind::Castle { .. }))
+        .iter().filter(|&step| matches!(step, StepKind::Castle { .. })).cloned()
         .collect();
     println!("Steps: {:?}", steps);
     assert_eq!(castles.len(), 2);
