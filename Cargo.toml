@@ -6,4 +6,6 @@ edition = "2021"
 [dependencies]
 ansi_term = "0.12.1"
 crossterm = "0.28.1"
+log = "0.4.22"
 ratatui = "0.29.0"
+simplelog = "0.12.2"

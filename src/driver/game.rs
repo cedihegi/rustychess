@@ -3,6 +3,7 @@ use crate::{
     models::{board::Board, game_state::GameState, step::StepKind},
 };
 
+#[derive(Debug, Default)]
 pub struct Game {
     pub board: Board,
 }
@@ -33,7 +34,25 @@ impl Game {
         if new_eval.has_stalemate {
             Ok(GameState::Stalemate)
         } else if new_eval.has_checkmate {
-            Ok(GameState::Won(color.invert()))
+            Ok(GameState::Won(color))
+        } else {
+            Ok(GameState::Ongoing)
+        }
+    }
+
+    pub fn apply_stepkind(&mut self, step_kind: StepKind) -> Result<GameState, String> {
+        // 1. evaluate position beforehand:
+        let color = self.board.turn_color();
+        let eval = self.board.evaluate_basic();
+
+        if eval.possible_moves.contains(&step_kind) {
+            self.board.apply_step_kind(&step_kind)?;
+        }
+        let new_eval = self.board.evaluate_basic();
+        if new_eval.has_stalemate {
+            Ok(GameState::Stalemate)
+        } else if new_eval.has_checkmate {
+            Ok(GameState::Won(color))
         } else {
             Ok(GameState::Ongoing)
         }

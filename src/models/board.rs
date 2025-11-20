@@ -5,12 +5,18 @@ use super::{
     step::{Direction, Step, StepKind},
 };
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Board {
     pub width: usize,
     pub height: usize,
     fields: Vec<FieldContent>,
     turn: usize,
+}
+
+impl Default for Board {
+    fn default() -> Self {
+        Self::standard_board()
+    }
 }
 
 impl Board {

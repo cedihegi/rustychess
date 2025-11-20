@@ -1,2 +1,2 @@
-pub mod driver;
+pub mod cli_driver;
 pub mod game;

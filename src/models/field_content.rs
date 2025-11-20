@@ -1,4 +1,4 @@
-use super::piece::ColoredPiece;
+use super::piece::{ColoredPiece, PieceColor};
 
 #[derive(Debug, Clone, Copy)]
 pub enum FieldContent {
@@ -19,6 +19,20 @@ impl FieldContent {
         match self {
             FieldContent::Occupied { piece, .. } => piece.to_colored_symbol(),
             FieldContent::Empty => " ".to_string(),
+        }
+    }
+
+    pub fn to_uncolored_piece_string(&self) -> String {
+        match self {
+            FieldContent::Occupied { piece, .. } => piece.kind.to_symbol(),
+            FieldContent::Empty => " ".to_string(),
+        }
+    }
+
+    pub fn get_color(&self) -> Option<PieceColor> {
+        match self {
+            FieldContent::Empty => None,
+            FieldContent::Occupied { piece, .. } => Some(piece.color),
         }
     }
 }

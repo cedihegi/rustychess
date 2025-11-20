@@ -4,11 +4,11 @@ use ratatui::{
 };
 
 #[derive(Default, Debug)]
-pub struct Header(pub i32);
+pub struct Header;
 
 impl Widget for Header {
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer) {
-        Paragraph::new(format!("Terminal Chess :), Counter: {}", self.0))
+        Paragraph::new("Terminal Chess :)")
             .centered()
             .block(Block::bordered().border_set(border::PLAIN))
             .render(area, buf);
